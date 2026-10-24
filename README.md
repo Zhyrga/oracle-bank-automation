@@ -12,7 +12,7 @@
 - **Пакет `bank_pkg`:** `deposit`, `withdraw`, `transfer`, `apply_interest`, `get_customer_balance`. Везде обработка ошибок: `RAISE_APPLICATION_ERROR`, блоки `EXCEPTION`, откат к `SAVEPOINT`.
 - **Триггеры:** аудит изменения баланса, запрет операций по счёту без действующей карты.
 - **Автоматизация:** ночное задание `DBMS_SCHEDULER` (процедура `expire_cards`) с логом в `card_status_log`.
-- **Тесты:** негативные тесты ограничений и тест процедуры `expire_cards`.
+- **Тесты:** негативные тесты ограничений, ручные тесты `deposit`, `withdraw`, `transfer`, `apply_interest`, `get_customer_balance`, обоих триггеров и тест процедуры `expire_cards` (успешный сценарий и ошибки, ожидаемый результат записан в комментариях).
 
 ## ER-диаграмма
 
@@ -127,7 +127,11 @@ README.md
 | 11 | `05_triggers/02_trg_check_card_status.sql` | запрет операций без действующей карты |
 | 12 | `05_triggers/03_expire_cards.sql` | процедура перевода карт в «Истекла» |
 | 13 | `05_triggers/04_job_expire_cards.sql` | ночное задание (нужно право `CREATE JOB`) |
-| 14 | `06_tests/*.sql` | тесты (перед запуском: `SET SERVEROUTPUT ON`) |
+| 14 | `06_tests/test_constraints.sql` | негативные тесты ограничений |
+| 15 | `06_tests/test_deposit_withdraw.sql`, `test_transfer.sql`, `test_function_and_interest.sql`, `test_triggers.sql` | ручные тесты пакета и триггеров: запускать по одному запросу и сравнивать с комментарием «Ожидаем» (в конце каждого файла `ROLLBACK`) |
+| 16 | `06_tests/test_expire_cards.sql` | тест процедуры `expire_cards` (делает `COMMIT`, данные возвращает сам) |
+
+Перед запуском тестов выполните `SET SERVEROUTPUT ON`.
 
 ## Принятые решения
 
